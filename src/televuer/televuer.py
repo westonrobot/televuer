@@ -95,7 +95,10 @@ class TeleVuer:
             self.right_aButton_shared = Value('b', False, lock=True)
             self.right_bButton_shared = Value('b', False, lock=True)
 
-        self._overlay = ""
+        # Use shared memory for overlay text to ensure it's accessible across processes
+        self._overlay_shared = Array('c', 256, lock=True)  # Support up to 256 characters
+        with self._overlay_shared.get_lock():
+            self._overlay_shared.value = b""
         self.process = Process(target=self.vuer_run)
         self.process.daemon = True
         self.process.start()
@@ -193,7 +196,16 @@ class TeleVuer:
             pass
     
     def update_overlay(self, overlay : str):
-        self._overlay = overlay
+        with self._overlay_shared.get_lock():
+            # Encode string to bytes and store in shared memory
+            overlay_bytes = overlay.encode('utf-8')[:255]  # Limit to 255 bytes
+            self._overlay_shared.value = overlay_bytes
+    
+    @property
+    def _overlay(self):
+        """Get the current overlay text from shared memory."""
+        with self._overlay_shared.get_lock():
+            return self._overlay_shared.value.decode('utf-8')
     
     async def main_image_binocular(self, session, fps=60):
         if self.use_hand_tracking:
