@@ -202,6 +202,9 @@ class TeleVuerWrapper:
         self.tvuer = TeleVuer(binocular, use_hand_tracking, img_shape, img_shm_name, cert_file=cert_file, key_file=key_file,
                                 ngrok=ngrok, webrtc=webrtc)
     
+    def update_overlay(self, overlay : str):
+        self.tvuer.update_overlay(overlay)
+    
     def get_motion_state_data(self):
         """
         Get processed motion state data from the TeleVuer instance.

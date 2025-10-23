@@ -95,6 +95,7 @@ class TeleVuer:
             self.right_aButton_shared = Value('b', False, lock=True)
             self.right_bButton_shared = Value('b', False, lock=True)
 
+        self._overlay = ""
         self.process = Process(target=self.vuer_run)
         self.process.daemon = True
         self.process.start()
@@ -191,6 +192,9 @@ class TeleVuer:
         except:
             pass
     
+    def update_overlay(self, overlay : str):
+        self._overlay = overlay
+    
     async def main_image_binocular(self, session, fps=60):
         if self.use_hand_tracking:
             session.upsert(
@@ -216,6 +220,19 @@ class TeleVuer:
         while True:
             display_image = cv2.cvtColor(self.img_array, cv2.COLOR_BGR2RGB)
             # aspect_ratio = self.img_width / self.img_height
+
+            # Draw state text on the image
+            # Calculate position for center horizontally and 25% from top
+            if not self._overlay == "":
+                height, width = display_image.shape[:2]
+                text = f"{self._overlay}"
+                text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
+                text_x = (width - text_size[0]) // 2
+                text_y = int(height * 0.30)
+            
+                cv2.putText(display_image, text, (text_x, text_y), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            
             session.upsert(
                 [
                     ImageBackground(
@@ -273,6 +290,19 @@ class TeleVuer:
 
         while True:
             display_image = cv2.cvtColor(self.img_array, cv2.COLOR_BGR2RGB)
+
+            # Draw state text on the image
+            # Calculate position for center horizontally and 25% from top
+            if not self._overlay == "":
+                height, width = display_image.shape[:2]
+                text = f"{self._overlay}"
+                text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
+                text_x = (width - text_size[0]) // 2
+                text_y = int(height * 0.30)
+            
+                cv2.putText(display_image, text, (text_x, text_y), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            
             # aspect_ratio = self.img_width / self.img_height
             session.upsert(
                 [
