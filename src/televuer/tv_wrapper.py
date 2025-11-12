@@ -269,8 +269,8 @@ class TeleVuerWrapper:
             right_IPunitree_Brobot_waist_arm = right_IPunitree_Brobot_head_arm.copy()
             left_IPunitree_Brobot_waist_arm[0, 3] +=0.15 # x
             right_IPunitree_Brobot_waist_arm[0,3] +=0.15
-            left_IPunitree_Brobot_waist_arm[2, 3] +=0.45 # z
-            right_IPunitree_Brobot_waist_arm[2,3] +=0.45
+            left_IPunitree_Brobot_waist_arm[2, 3] +=1.0 # z
+            right_IPunitree_Brobot_waist_arm[2,3] +=1.0
 
             # -----------------------------------hand position----------------------------------------
             if left_arm_is_valid and right_arm_is_valid:
